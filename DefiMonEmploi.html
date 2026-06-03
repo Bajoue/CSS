@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Défi MonEmploi - Orientation Québec</title>
+    <!-- Tailwind CSS pour des graphismes modernes de pointe -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: radial-gradient(circle at top right, #eef2ff, #f8fafc);
+        }
+
+        /* Animations personnalisées */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0.95); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop {
+            animation: pop 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Hover de cartes */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- Audio Engine Toggle & Header -->
+    <header class="bg-slate-900 text-white shadow-xl sticky top-0 z-50 border-b border-slate-800">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-4">
+            
+            <!-- Logo & Title -->
+            <div class="flex items-center gap-3">
+                <div class="p-2.5 bg-gradient-to-tr from-indigo-500 to-blue-600 rounded-xl animate-float">
+                    <i data-lucide="compass" class="w-6 h-6 text-yellow-300"></i>
+                </div>
+                <div>
+                    <h1 class="text-md font-extrabold tracking-tight bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+                        LE DÉFI MONEMPLOI
+                    </h1>
+                    <p class="text-[10px] text-slate-400 font-semibold tracking-wider uppercase">Exploration Québec • 4e Secondaire</p>
+                </div>
+            </div>
+
+            <!-- Contrôles & Liens -->
+            <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                <!-- Bouton d'accès direct au site -->
+                <a href="https://www.monemploi.com/metiers-et-professions" target="_blank" class="bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 transition shadow-sm">
+                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                    monemploi.com
+                </a>
+
+                <!-- Option de son audio (généré synthétiquement) -->
+                <button onclick="toggleAudio()" id="audio-toggle" class="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white transition flex items-center gap-1.5 text-xs">
+                    <i data-lucide="volume-2" id="audio-icon" class="w-4 h-4"></i>
+                    <span>Son : Activé</span>
+                </button>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- Zone principale -->
+    <main class="max-w-6xl mx-auto px-4 py-8 flex-grow w-full flex flex-col justify-center">
+
+        <!-- ================= ÉCRAN D'ACCUEIL ================= -->
+        <div id="welcome-screen" class="max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl p-8 border border-slate-100 animate-pop">
+            <div class="text-center mb-8">
+                <span class="inline-block bg-indigo-50 text-indigo-700 text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-full mb-3">
+                    Édition Marathon 36 Énigmes
+                </span>
+                <h2 class="text-3xl font-black text-slate-900 tracking-tight leading-tight">
+                    Prêts à décoder votre avenir ?
+                </h2>
+                <p class="text-slate-500 text-sm mt-3 leading-relaxed">
+                    Un défi de haut niveau basé exclusivement sur les fiches du site <strong class="text-indigo-600">MonEmploi.com</strong>. Relevez 3 grandes missions de 12 questions chacune pour maîtriser sur le bout des doigts le système scolaire québécois et ses professions.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 text-center">
+                    <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <i data-lucide="git-merge" class="w-5 h-5"></i>
+                    </div>
+                    <h4 class="font-bold text-xs text-slate-800 uppercase">1. Décodeur (12 questions)</h4>
+                    <p class="text-[11px] text-slate-500 mt-1">Classer les niveaux DEP, DEC et Baccalauréat.</p>
+                </div>
+                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 text-center">
+                    <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <i data-lucide="shield-alert" class="w-5 h-5"></i>
+                    </div>
+                    <h4 class="font-bold text-xs text-slate-800 uppercase">2. Inspecteur (12 questions)</h4>
+                    <p class="text-[11px] text-slate-500 mt-1">Distinguer les tâches exclusives de chaque métier.</p>
+                </div>
+                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 text-center">
+                    <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <i data-lucide="users" class="w-5 h-5"></i>
+                    </div>
+                    <h4 class="font-bold text-xs text-slate-800 uppercase">3. Simulateur (12 questions)</h4>
+                    <p class="text-[11px] text-slate-500 mt-1">Orienter des élèves québécois fictifs.</p>
+                </div>
+            </div>
+
+            <!-- Formulaire joueurs -->
+            <div class="bg-indigo-50/50 rounded-2xl p-6 border border-indigo-100/60 mb-6">
+                <h4 class="font-extrabold text-sm text-indigo-950 mb-3 flex items-center gap-1.5">
+                    <i data-lucide="user-plus" class="w-4 h-4"></i>
+                    Identité des coéquipiers
+                </h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-indigo-700 mb-1">Ton Nom complet</label>
+                        <input type="text" id="player-name" placeholder="Ex: Émile Roy" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition text-sm bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase tracking-wider text-indigo-700 mb-1">Nom de ton voisin de table (partenaire)</label>
+                        <input type="text" id="partner-name" placeholder="Ex: Florence Tremblay" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition text-sm bg-white">
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="startGame()" class="w-full bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-extrabold py-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-sm uppercase tracking-wider">
+                Lancer la partie <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <!-- ================= ZONE DE JEU PRINCIPALE ================= -->
+        <div id="game-screen" class="hidden grid grid-cols-1 lg:grid-cols-4 gap-6">
+            
+            <!-- Panneau d'informations de gauche (Statut de l'élève) -->
+            <div class="lg:col-span-1 space-y-4">
+                
+                <!-- Identifiants Équipe -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
+                    <span class="text-[9px] font-bold uppercase tracking-widest text-slate-400 block mb-1">Joueur Connecté</span>
+                    <h3 id="sidebar-player-1" class="font-extrabold text-slate-800 text-sm truncate">Nom Joueur</h3>
+                    
+                    <span class="text-[9px] font-bold uppercase tracking-widest text-slate-400 block mt-3 mb-1">Partenaire à vos côtés</span>
+                    <h3 id="sidebar-player-2" class="font-bold text-slate-500 text-xs truncate">Nom Partenaire</h3>
+                </div>
+
+                <!-- Tableau de bord du Score et Progression -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Score Global</span>
+                        <span id="score-badge" class="bg-indigo-600 text-white text-xs font-black px-3 py-1 rounded-full">0 pts</span>
+                    </div>
+
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-[11px] font-semibold text-slate-400">
+                            <span>Avancement général</span>
+                            <span id="progress-text">0%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                            <div id="progress-bar" class="bg-indigo-600 h-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="pt-3 border-t border-slate-100 flex justify-between items-center text-xs">
+                        <span class="text-slate-500">Badges d'expert :</span>
+                        <div class="flex flex-wrap gap-1" id="badges-container">
+                            <!-- Les badges gagnés s'ajouteront ici -->
+                            <span class="text-slate-300 cursor-not-allowed">Aucun</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Référentiel des types de parcours au Québec -->
+                <div class="bg-slate-900 text-slate-300 rounded-2xl p-5 shadow-lg space-y-4">
+                    <h4 class="font-extrabold text-xs text-indigo-400 uppercase tracking-widest flex items-center gap-1.5">
+                        <i data-lucide="layers" class="w-4 h-4"></i> Le Guide des diplômes
+                    </h4>
+                    <div class="space-y-3 text-xs leading-relaxed">
+                        <div>
+                            <span class="inline-block bg-amber-500/20 text-amber-300 font-bold px-1.5 py-0.5 rounded text-[10px] mb-1">DEP</span>
+                            <p class="text-slate-400"><strong>Diplôme d'études professionnelles :</strong> Pratique, technique, axé sur les métiers manuels et industriels.</p>
+                        </div>
+                        <div>
+                            <span class="inline-block bg-blue-500/20 text-blue-300 font-bold px-1.5 py-0.5 rounded text-[10px] mb-1">DEC Technique</span>
+                            <p class="text-slate-400"><strong>Diplôme d'études collégiales :</strong> 3 ans au Cégep. Mélange de théorie et d'application directe sur le marché de l'emploi.</p>
+                        </div>
+                        <div>
+                            <span class="inline-block bg-emerald-500/20 text-emerald-300 font-bold px-1.5 py-0.5 rounded text-[10px] mb-1">Baccalauréat (BAC)</span>
+                            <p class="text-slate-400"><strong>Université :</strong> 3 à 4 ans d'études après le Cégep. Requis pour concevoir, gérer ou exercer une profession libérale.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Zone de contenu et d'activité interactive (Missions) -->
+            <div class="lg:col-span-3 space-y-6">
+                
+                <!-- En-tête des onglets de missions -->
+                <div class="bg-white p-2 rounded-2xl shadow-sm border border-slate-100 flex gap-2 overflow-x-auto">
+                    <button id="tab-1" class="px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 shrink-0 bg-indigo-600 text-white shadow-md">
+                        <span class="w-5 h-5 rounded-full bg-indigo-800 text-white flex items-center justify-center text-[10px]">1</span>
+                        Décodeur de Parcours
+                    </button>
+                    <button id="tab-2" class="px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 shrink-0 bg-slate-100 text-slate-400 cursor-not-allowed" disabled>
+                        <span class="w-5 h-5 rounded-full bg-slate-300 text-slate-600 flex items-center justify-center text-[10px]">2</span>
+                        Inspecteur de Tâches
+                    </button>
+                    <button id="tab-3" class="px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 shrink-0 bg-slate-100 text-slate-400 cursor-not-allowed" disabled>
+                        <span class="w-5 h-5 rounded-full bg-slate-300 text-slate-600 flex items-center justify-center text-[10px]">3</span>
+                        Simulateur d'Orientation
+                    </button>
+                </div>
+
+                <!-- Boîtier de jeu actif -->
+                <div id="mission-wrapper" class="bg-white rounded-3xl shadow-md border border-slate-100 p-6 sm:p-8 animate-pop">
+                    <!-- Généré dynamiquement en JS -->
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ================= ÉCRAN DE FIN DE PARTIE / CERTIFICAT ================= -->
+        <div id="victory-screen" class="hidden max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl p-10 border border-slate-100 text-center relative overflow-hidden animate-pop">
+            <div class="absolute -top-10 -right-10 w-40 h-40 bg-indigo-100 rounded-full blur-3xl opacity-50"></div>
+            <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-indigo-100 rounded-full blur-3xl opacity-50"></div>
+
+            <div class="w-20 h-20 bg-gradient-to-tr from-emerald-400 to-teal-500 text-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg animate-float">
+                <i data-lucide="award" class="w-10 h-10"></i>
+            </div>
+
+            <h2 class="text-3xl font-black text-slate-900 tracking-tight">Félicitations, vous êtes certifiés !</h2>
+            <p class="text-slate-500 text-sm mt-2 max-w-md mx-auto">
+                Vous avez fouillé, analysé et décodé les structures complexes d'études et de carrières au Québec avec brio.
+            </p>
+
+            <!-- Certificat Officiel Québec-MonEmploi -->
+            <div class="my-8 p-6 border-4 border-double border-indigo-200 bg-indigo-50/30 rounded-3xl max-w-md mx-auto shadow-inner relative">
+                <div class="absolute top-2 right-4 text-indigo-400 font-bold text-[9px] uppercase tracking-wider">Édition 2026</div>
+                
+                <span class="text-[9px] font-bold text-indigo-600 uppercase tracking-widest block mb-1">Attestation d'Explorateur d'Élite</span>
+                
+                <h3 class="text-2xl font-black text-slate-800" id="cert-names">Nom Joueur &amp; Nom Partenaire</h3>
+                <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+                    A complété l'entièreté des épreuves d'orientation scolaires et professionnelles basées sur le site officiel <strong class="text-slate-700">MonEmploi.com</strong>.
+                </p>
+
+                <div class="mt-6 flex justify-around items-center bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+                    <div>
+                        <span class="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">Points cumulés</span>
+                        <span id="cert-score" class="text-2xl font-black text-indigo-600">0 pts</span>
+                    </div>
+                    <div class="h-8 w-px bg-slate-200"></div>
+                    <div>
+                        <span class="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">Niveau</span>
+                        <span class="text-xs font-extrabold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full mt-1 inline-block">Maître-Orienteur</span>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-xs text-slate-400 mb-6">
+                Faites une capture d'écran de cet écran et soumettez-la à votre enseignant(e) ou conseiller(ère) d'orientation !
+            </p>
+
+            <button onclick="restartGame()" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition">
+                Recommencer une partie
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Pied de page -->
+    <footer class="bg-slate-900 text-slate-400 border-t border-slate-800 py-6 text-center text-xs">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <p>© 2026 • Activité pédagogique libre pour les écoles secondaires du Québec.</p>
+            <p class="text-slate-500 text-[10px]">Conçu pour s'aligner sur le programme d'Orientation scolaire (PPO).</p>
+        </div>
+    </footer>
+
+    <!-- LOGIQUE DE JEU INTERACTIVE -->
+    <script>
+        // --- SYNTHÉTISEUR AUDIO DE JEU (WEB AUDIO API) ---
+        let audioEnabled = true;
+        let audioCtx = null;
+
+        function playSound(type) {
+            if (!audioEnabled) return;
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'success') {
+                    // Petite mélodie ascendante joyeuse
+                    const now = audioCtx.currentTime;
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                    osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                    osc.start(now);
+                    osc.stop(now + 0.4);
+                } else if (type === 'error') {
+                    // Son de bourdonnement court
+                    const now = audioCtx.currentTime;
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(150, now);
+                    osc.frequency.linearRampToValueAtTime(80, now + 0.3);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'victory') {
+                    // Fanfare de victoire
+                    const now = audioCtx.currentTime;
+                    osc.type = 'sine';
+                    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                    notes.forEach((freq, idx) => {
+                        osc.frequency.setValueAtTime(freq, now + idx * 0.15);
+                    });
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+                    osc.start(now);
+                    osc.stop(now + 0.8);
+                }
+            } catch (e) {
+                console.log("Audio non supporté ou bloqué par le navigateur", e);
+            }
+        }
+
+        function toggleAudio() {
+            audioEnabled = !audioEnabled;
+            const btn = document.getElementById('audio-toggle');
+            const icon = document.getElementById('audio-icon');
+            if (audioEnabled) {
+                btn.className = "p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white transition flex items-center gap-1.5 text-xs";
+                btn.innerHTML = `<i data-lucide="volume-2" class="w-4 h-4"></i> <span>Son : Activé</span>`;
+            } else {
+                btn.className = "p-2 rounded-lg bg-slate-800 text-slate-500 hover:text-white transition flex items-center gap-1.5 text-xs";
+                btn.innerHTML = `<i data-lucide="volume-x" class="w-4 h-4"></i> <span>Son : Désactivé</span>`;
+            }
+            lucide.createIcons();
+        }
+
+        // --- BANQUE DE QUESTIONS ET SYSTÈME DE JEU ---
+        // Basé sur monemploi.com/metiers-et-professions
+        const database = {
+            // Mission 1 : Le Décodeur de Parcours (12 questions)
+            mission1: [
+                {
+                    title: "Énigme : Oxygène sous haute pression",
+                    instruction: "Recherchez le métier associé à cette énigme sur MonEmploi. Pour exercer ce rôle essentiel dans l'évaluation et le traitement des fonctions cardiorespiratoires dans les hôpitaux du Québec, quel parcours d'études devez-vous obligatoirement compléter après votre secondaire ?",
+                    searchTip: "Conseil de recherche : Tapez un mot lié à la respiration artificielle et vérifiez la formation minimale.",
+                    options: [
+                        { text: "Un DEP (Diplôme d'études professionnelles)", isCorrect: false, feedback: "Le DEP ne confère pas le niveau d'autonomie et de spécialisation respiratoire requis pour ce rôle clinique." },
+                        { text: "Un DEC technique en inhalothérapie (3 ans au Cégep)", isCorrect: true, feedback: "Excellent ! Ce DEC technique de 3 ans prépare directement à l'évaluation et au traitement des fonctions cardiorespiratoires." },
+                        { text: "Un Baccalauréat universitaire (4 ans)", isCorrect: false, feedback: "La formation collégiale technique est le diplôme d'entrée officiel, pas besoin de diplôme universitaire de premier cycle." }
+                    ]
+                },
+                {
+                    title: "Énigme : Les maîtres de la charpente de bois",
+                    instruction: "Les métiers de la construction au Québec sont très encadrés. Pour pouvoir travailler physiquement sur les grands chantiers du bâtiment à assembler des structures, quel diplôme d'études devez-vous décrocher ?",
+                    searchTip: "Consultez la fiche liée à l'assemblage et à la menuiserie de structures sur MonEmploi.",
+                    options: [
+                        { text: "Un DEC technique en architecture de Cégep", isCorrect: false, feedback: "Le technologue conçoit les plans théoriques, la manipulation de terrain demande un parcours différent." },
+                        { text: "Un DEP de niveau professionnel (secondaire professionnel)", isCorrect: true, feedback: "Tout à fait ! C'est un diplôme d'études professionnelles d'environ 1350 heures dispensé en centre de formation professionnelle (CFP)." },
+                        { text: "Un certificat de formation générale aux adultes", isCorrect: false, feedback: "La formation générale seule ne remplace pas l'apprentissage réglementaire requis pour ce métier de la construction." }
+                    ]
+                },
+                {
+                    title: "Énigme : Décoder l'esprit des criminels",
+                    instruction: "Ce spécialiste analyse les comportements marginaux et aide à la réhabilitation. Selon MonEmploi, quel niveau de scolarité universitaire minimale est requis pour porter ce titre professionnel ?",
+                    searchTip: "Vérifiez les exigences d'intégration de l'Ordre des criminologues du Québec (OPQ).",
+                    options: [
+                        { text: "Un DEC technique de 3 ans en techniques policières", isCorrect: false, feedback: "Le DEC technique mène au métier de policier, pas à ce rôle d'analyse sociale et clinique comportementale." },
+                        { text: "Un Baccalauréat universitaire (BAC)", isCorrect: true, feedback: "Excellent ! Il faut posséder un diplôme universitaire de premier cycle (Baccalauréat) pour faire partie de l'Ordre." },
+                        { text: "Une Maîtrise universitaire avancée de 5 ans", isCorrect: false, feedback: "Le baccalauréat universitaire est le diplôme d'entrée officiel, bien que certains poursuivent des études supérieures." }
+                    ]
+                },
+                {
+                    title: "Énigme : Assistance de première ligne en soins cliniques",
+                    instruction: "Au Québec, le milieu de la santé distingue plusieurs paliers de soins. Pour ce métier qui donne des soins de base et administre certains médicaments sous ordonnance, quelle est la formation requise ?",
+                    searchTip: "Consultez la fiche de l'auxiliaire de soins cliniques (SASI) sur le site.",
+                    options: [
+                        { text: "Un DEP en Santé, assistance et soins infirmiers (SASI)", isCorrect: true, feedback: "C'est exact ! Un parcours de niveau professionnel (DEP d'environ 1800 heures) mène à cette profession réglementée par l'OIIAQ." },
+                        { text: "Un DEC technique en soins infirmiers (3 ans)", isCorrect: false, feedback: "Le DEC technique forme les infirmiers généralistes (OIIQ), alors que ce rôle d'auxiliaire de soins passe par le DEP." },
+                        { text: "Un Baccalauréat universitaire en sciences cliniques", isCorrect: false, feedback: "Le baccalauréat mène à un titre clinique d'échelon supérieur." }
+                    ]
+                },
+                {
+                    title: "Énigme : Redonner la mobilité physique",
+                    instruction: "Ce professionnel applique des traitements physiques pour réadapter les patients après une blessure. Quel parcours d'études prépare à ce rôle technique ?",
+                    searchTip: "Regardez le parcours pour devenir technologue d'assistance en physiothérapie au Cégep.",
+                    options: [
+                        { text: "Un DEP en assistance physique", isCorrect: false, feedback: "Il n'existe pas de DEP officiel accordant le droit professionnel d'appliquer des traitements d'électrothérapie ou de thermothérapie." },
+                        { text: "Un DEC technique en réadaptation physique (3 ans au Cégep)", isCorrect: true, feedback: "Bravo ! C'est un diplôme collégial technique de 3 ans qui donne accès à l'Ordre professionnel de la physiothérapie du Québec (OPQ)." },
+                        { text: "Une Maîtrise universitaire en physiothérapie", isCorrect: false, feedback: "La maîtrise est obligatoire pour le titre complet de physiothérapeute, mais pas pour le technologue technique." }
+                    ]
+                },
+                {
+                    title: "Énigme : Maîtriser la tuyauterie et les flux",
+                    instruction: "L'installation et la réparation des canalisations de fluides et de gaz exigent un travail manuel de haute précision. Quel est le parcours requis pour exercer ce métier réglementé par la CCQ ?",
+                    searchTip: "Cherchez la fiche liée au raccordement des tuyaux et conduits de chauffage sur le site.",
+                    options: [
+                        { text: "Un DEC en génie mécanique du bâtiment", isCorrect: false, feedback: "C'est un parcours de conception théorique en bureau d'études." },
+                        { text: "Un DEP en Plomberie-chauffage", isCorrect: true, feedback: "Tout à fait ! C'est un diplôme d'études professionnelles d'environ 1500 heures suivi d'une période d'apprentissage." },
+                        { text: "Un Baccalauréat en génie civil", isCorrect: false, feedback: "L'ingénieur civil conçoit les réseaux d'aqueduc urbains généraux, mais ne s'occupe pas de la pose de tuyauterie." }
+                    ]
+                },
+                {
+                    title: "Énigme : Gardien de l'équilibre financier d'entreprise",
+                    instruction: "Ce titre prestigieux atteste d'une expertise fine en comptabilité de haut niveau et en fiscalité. Quel est le diplôme minimal d'études exigé pour s'inscrire à l'Ordre professionnel de ce domaine ?",
+                    searchTip: "Consultez la formation pour obtenir le titre de CPA sur MonEmploi.",
+                    options: [
+                        { text: "Un DEC technique en comptabilité (3 ans)", isCorrect: false, feedback: "Ce diplôme forme des techniciens, mais ne permet pas de se présenter à l'examen d'admission de l'Ordre des CPA." },
+                        { text: "Un Baccalauréat universitaire en administration ou comptabilité (BAC)", isCorrect: true, feedback: "Magnifique ! Le BAC universitaire de 3 ans est requis, suivi du programme de formation professionnelle des CPA." },
+                        { text: "Un DEP en comptabilité", isCorrect: false, feedback: "Le DEP forme des commis et adjoints de bureau de base, pas des CPA." }
+                    ]
+                },
+                {
+                    title: "Énigme : Organisateur de la vie communautaire",
+                    instruction: "Organiser des activités récréatives, sportives ou culturelles pour mobiliser la population locale demande de solides compétences d'organisation. Quel diplôme de Cégep y prépare ?",
+                    searchTip: "Cherchez le profil lié à la gestion de loisir sur le site.",
+                    options: [
+                        { text: "Un DEP en Animation récréative", isCorrect: false, feedback: "Il n'existe pas de DEP officiel dans cette branche exacte pour la fonction publique." },
+                        { text: "Un DEC technique en gestion de loisir (3 ans)", isCorrect: true, feedback: "Excellent ! Ce DEC de 3 ans forme les intervenants et gestionnaires de loisirs dans les municipalités et écoles du Québec." },
+                        { text: "Un Baccalauréat en sociologie", isCorrect: false, feedback: "Bien que connexe, la sociologie est un parcours théorique universitaire de recherche de niveau supérieur." }
+                    ]
+                },
+                {
+                    title: "Énigme : Combattre pour la justice devant la cour",
+                    instruction: "Pour représenter officiellement des personnes devant un juge ou donner des avis juridiques contraignants, quel est le diplôme d'entrée exigé ?",
+                    searchTip: "Recherchez la formation menant à l'intégration de l'Ordre professionnel du Barreau du Québec.",
+                    options: [
+                        { text: "Un DEC technique en techniques juridiques", isCorrect: false, feedback: "Ce DEC forme les parajuristes qui assistent, mais ne plaident pas devant les tribunaux." },
+                        { text: "Un Baccalauréat universitaire en droit (LL.B. ou LL.L.)", isCorrect: true, feedback: "Absolument ! Il faut un Baccalauréat universitaire en droit (3 ans) suivi des examens professionnels du Barreau et d'un stage." },
+                        { text: "Un DEP en secrétariat juridique", isCorrect: false, feedback: "Le DEP forme les adjoints administratifs spécialisés dans les cabinets." }
+                    ]
+                },
+                {
+                    title: "Énigme : Artisans de la haute tension",
+                    instruction: "Installer et entretenir le réseau électrique aérien ou souterrain sur des pylônes en hauteur requiert de grandes habiletés physiques. Quel est le diplôme requis ?",
+                    searchTip: "Cherchez la fiche liée aux techniciens qui grimpent aux poteaux d'électricité sur le site.",
+                    options: [
+                        { text: "Un DEP spécialisé en montage de lignes électriques", isCorrect: true, feedback: "C'est exact ! Un DEP d'environ 900 heures est requis pour apprendre le métier de façon sécuritaire et pratique." },
+                        { text: "Un DEC technique en électrophysique", isCorrect: false, feedback: "Ce diplôme s'oriente vers la conception et la recherche de labo, pas vers le raccordement physique sur le terrain." },
+                        { text: "Un certificat universitaire en distribution d'énergie", isCorrect: false, feedback: "Il n'existe pas de certificat de terrain universitaire pour ce travail." }
+                    ]
+                },
+                {
+                    title: "Énigme : Détective microscopique des laboratoires",
+                    instruction: "Ce technicien analyse les cellules, tissus et fluides pour aider les médecins à poser des diagnostics précis. Quelle formation y prépare ?",
+                    searchTip: "Recherchez la fiche du technologue d'analyses biomédicales sur le site.",
+                    options: [
+                        { text: "Un DEP en assistance de laboratoire", isCorrect: false, feedback: "Le DEP ne confère pas l'autorisation d'effectuer des analyses et des manipulations techniques de laboratoire clinique." },
+                        { text: "Un DEC technique en Technologie d'analyses biomédicales (3 ans)", isCorrect: true, feedback: "Bravo ! C'est ce DEC technique au Cégep qui permet d'obtenir le permis de l'OPTMQ pour travailler en laboratoire médical." },
+                        { text: "Un Baccalauréat en biologie médicale", isCorrect: false, feedback: "Le BAC prépare plutôt à la recherche scientifique pure ou à la gestion générale de projet." }
+                    ]
+                },
+                {
+                    title: "Énigme : Explorer les profondeurs de l'esprit humain",
+                    instruction: "Ce titre professionnel est l'un des plus encadrés du secteur de la santé comportementale au Québec. Quel est le niveau d'études obligatoire requis pour porter ce titre de nos jours ?",
+                    searchTip: "Regardez la section formation pour faire partie de l'Ordre des psychologues du Québec (OPQ).",
+                    options: [
+                        { text: "Un Baccalauréat universitaire (3 ans)", isCorrect: false, feedback: "Depuis plusieurs années, le baccalauréat ne suffit plus pour porter ce titre professionnel de manière autonome au Québec." },
+                        { text: "Un Doctorat universitaire complet (D.Psy. ou Ph.D.)", isCorrect: true, feedback: "Magnifique ! Le Québec exige un doctorat complet (environ 7 à 9 ans d'études après le secondaire) pour exercer de façon autonome et diagnostiquer les troubles mentaux." },
+                        { text: "Un DEC technique en éducation spécialisée", isCorrect: false, feedback: "L'éducateur spécialisé applique des plans d'intervention, mais ne possède pas ce titre d'analyse clinique de l'esprit." }
+                    ]
+                }
+            ],
+
+            // Mission 2 : L'Inspecteur de Tâches (12 questions)
+            mission2: [
+                {
+                    title: "Énigme : Diagnostic clinique vs Acquisition d'images",
+                    instruction: "Bien que collaborant dans les services d'imagerie, ces deux profils ont des responsabilités très différentes. Quelle tâche représente l'activité exclusive du médecin spécialiste ?",
+                    searchTip: "Comparez les fiches 'Radiologiste' et 'Technologue en radiodiagnostic' sur MonEmploi.",
+                    options: [
+                        { text: "Manipuler les appareils de radiographie et rassurer les patients.", isCorrect: false, feedback: "Ceci est la tâche quotidienne du technologue en radiologie (DEC technique)." },
+                        { text: "Diagnostiquer les maladies à partir des clichés et rédiger un rapport médical de recommandation.", isCorrect: true, feedback: "Génial ! Le radiologiste est un médecin spécialiste. Seul lui est habilité à poser des diagnostics médicaux complexes." },
+                        { text: "Ajuster l'intensité des rayons X sur la machine.", isCorrect: false, feedback: "C'est un rôle technique de précision dévolu au technologue." }
+                    ]
+                },
+                {
+                    title: "Énigme : L'application terrain des plans d'aide au comportement",
+                    instruction: "Ce technicien joue un rôle pivot dans le milieu scolaire. Quelle action fait partie de son quotidien selon la définition officielle ?",
+                    searchTip: "Trouvez la fiche 'Technicien / technicienne en éducation spécialisée' et examinez les tâches.",
+                    options: [
+                        { text: "Faire passer des tests psychométriques pour évaluer le QI global des élèves.", isCorrect: false, feedback: "Cette tâche d'évaluation cognitive est strictement réservée au psychologue scolaire." },
+                        { text: "Élaborer et appliquer des plans d'intervention pour soutenir des élèves ayant des difficultés d'adaptation.", isCorrect: true, feedback: "C'est exactement ça ! Le TES intervient directement pour guider le comportement et l'adaptation sociale au jour le jour." },
+                        { text: "Modifier les programmes de cours généraux émis par le ministère.", isCorrect: false, feedback: "Le TES adapte l'aide, mais n'intervient pas dans l'élaboration législative des programmes scolaires." }
+                    ]
+                },
+                {
+                    title: "Énigme : Conception graphique vs Sceau légal",
+                    instruction: "Entre la modélisation de détails et la conception responsable d'un bâtiment, les rôles sont clairs. Quelle tâche est réservée exclusivement au professionnel membre de l'Ordre (OAQ) ?",
+                    searchTip: "Comparez les tâches sur 'Architecte' et 'Technologue en architecture'.",
+                    options: [
+                        { text: "Modéliser des pièces en 3D sur des logiciels spécialisés.", isCorrect: false, feedback: "C'est une tâche commune réalisée quotidiennement par les deux concepteurs." },
+                        { text: "Concevoir le concept esthétique global, signer et apposer le sceau légal sur les plans d'édifices de grande taille.", isCorrect: true, feedback: "Tout à fait ! Seul le professionnel agréé membre de l'OAQ détient la responsabilité civile et légale de valider et sceller les concepts de grands édifices." },
+                        { text: "Prendre les mesures physiques d'un bâtiment existant sur le terrain.", isCorrect: false, feedback: "C'est une tâche technique générale, souvent confiée au technologue." }
+                    ]
+                },
+                {
+                    title: "Énigme : Rédaction d'actes authentiques incontestables",
+                    instruction: "La rédaction d'un document officiel incontestable (comme un contrat de vente immobilière ou un testament spécial) fait partie de ce métier du droit civil québécois. Quelle tâche le caractérise ?",
+                    searchTip: "Consultez la fiche du 'Notaire' pour connaître ses actes spécifiques.",
+                    options: [
+                        { text: "Plaider vigoureusement la cause d'un accusé lors d'un procès criminel.", isCorrect: false, feedback: "Plaider au criminel est le rôle exclusif de l'avocat." },
+                        { text: "Rédiger et officialiser des actes dits 'authentiques' en servant de conseiller impartial pour toutes les parties.", isCorrect: true, feedback: "Bravo ! Le notaire est un officier public impartial qui rédige des actes à valeur juridique authentique." },
+                        { text: "Mener une enquête pour déceler des fraudes financières d'entreprise.", isCorrect: false, feedback: "C'est le travail des enquêteurs de police ou des juricomptables." }
+                    ]
+                },
+                {
+                    title: "Énigme : Éveiller le potentiel des tout-petits",
+                    instruction: "Ce travail s'effectue dans des structures comme les centres de la petite enfance (CPE). Quelle tâche caractérise le quotidien de ce personnel ?",
+                    searchTip: "Regardez la fiche 'Éducateur / éducatrice en service de garde'.",
+                    options: [
+                        { text: "Planifier et animer des activités de stimulation globale (physique, cognitive, sociale) pour les enfants de 0 à 5 ans.", isCorrect: true, feedback: "C'est parfait ! Le développement harmonieux des tout-petits est au cœur des programmes éducatifs des CPE." },
+                        { text: "Enseigner la lecture et l'écriture de niveau scolaire primaire.", isCorrect: false, feedback: "Ceci est la responsabilité de l'enseignant de niveau primaire, pas de l'éducatrice en CPE." },
+                        { text: "Prescrire des traitements pour soigner les blessures mineures.", isCorrect: false, feedback: "Le diagnostic clinique et la prescription d'ordonnances sont réservés aux médecins." }
+                    ]
+                },
+                {
+                    title: "Énigme : Les limites géographiques légales des terrains",
+                    instruction: "Avant de diviser un terrain ou de construire une propriété, ce professionnel intervient pour poser des repères physiques. Quelle est sa tâche exclusive ?",
+                    searchTip: "Cherchez la fiche de l'expert en cadastre et en arpentage sur le site.",
+                    options: [
+                        { text: "Négocier les conditions de transaction commerciale d'un immeuble.", isCorrect: false, feedback: "C'est la tâche du courtier immobilier." },
+                        { text: "Délimiter officiellement et légalement les frontières de propriétés publiques et privées à l'aide de bornes et de rapports d'expertise.", isCorrect: true, feedback: "Exact ! L'arpenteur-géomètre est le seul autorisé par la loi à dresser des plans de cadastre et à borner les terrains au Québec." },
+                        { text: "Creuser le sol pour valider la composition minéralogique profonde.", isCorrect: false, feedback: "C'est le rôle du géologue ou de l'ingénieur des mines." }
+                    ]
+                },
+                {
+                    title: "Énigme : Guider les choix professionnels et d'études",
+                    instruction: "Ce conseiller aide la personne à analyser sa personnalité et ses intérêts. Quelle tâche définit le mieux son champ d'action professionnel ?",
+                    searchTip: "Consultez la fiche du professionnel qui réalise des entretiens d'orientation de carrière.",
+                    options: [
+                        { text: "Évaluer le fonctionnement psychologique et les intérêts afin de guider le choix de carrière et de formation.", isCorrect: true, feedback: "Félicitations ! Le Conseiller en orientation utilise des outils scientifiques pour aider à s'orienter tout au long de la vie." },
+                        { text: "Gérer l'affectation automatique des places dans les établissements d'enseignement.", isCorrect: false, feedback: "Les inscriptions passent par des systèmes centralisés, pas directement par ce professionnel d'aide." },
+                        { text: "Élaborer l'emploi du temps des enseignants d'une commission scolaire.", isCorrect: false, feedback: "C'est une tâche de gestion administrative interne de l'école." }
+                    ]
+                },
+                {
+                    title: "Énigme : Prélèvements cliniques vs Diagnostics pulmonaires",
+                    instruction: "Ces deux professionnels collaborent en santé respiratoire. Quelle tâche revient légalement au médecin spécialisé ?",
+                    searchTip: "Comparez les fiches 'Pneumologue' et 'Inhalothérapeute'.",
+                    options: [
+                        { text: "Ajuster les respirateurs artificiels dans les unités de soins critiques.", isCorrect: false, feedback: "C'est une tâche technique et clinique de l'inhalothérapeute." },
+                        { text: "Poser un diagnostic médical de pathologie respiratoire chronique et prescrire des thérapies médicamenteuses.", isCorrect: true, feedback: "Excellent ! Le diagnostic médical de maladie et la prescription d'ordonnances sont réservés au médecin pneumologue." },
+                        { text: "Faire des prélèvements sanguins artériels pour mesurer la saturation en oxygène.", isCorrect: false, feedback: "C'est une tâche clinique couramment exécutée par l'inhalothérapeute." }
+                    ]
+                },
+                {
+                    title: "Énigme : Réaménagement fonctionnel vs Rajeunissement esthétique",
+                    instruction: "La réorganisation fonctionnelle et la sécurité d'un espace diffèrent de sa simple décoration visuelle. Quelle est la tâche technique du spécialiste de l'espace ?",
+                    searchTip: "Consultez la fiche 'Designer d'intérieur' sur le site.",
+                    options: [
+                        { text: "Choisir la couleur des rideaux et peindre les boiseries.", isCorrect: false, feedback: "La décoration pure s'oriente vers ces activités visuelles sans modification de structure." },
+                        { text: "Restructurer les espaces intérieurs (cloisons non portantes), planifier les installations d'éclairage et veiller à la conformité du Code du bâtiment.", isCorrect: true, feedback: "Bravo ! Le designer d'intérieur a une formation technique rigoureuse axée sur la fonctionnalité et la sécurité." },
+                        { text: "Fabriquer des armoires en bois massif.", isCorrect: false, feedback: "C'est la tâche de l'ébéniste." }
+                    ]
+                },
+                {
+                    title: "Énigme : Prévention buccale vs Intervention invasive",
+                    instruction: "En cabinet de santé buccale, les compétences se complètent. Quelle tâche est de la responsabilité exclusive du docteur ?",
+                    searchTip: "Faites la différence entre 'Dentiste' et 'Hygiéniste dentaire'.",
+                    options: [
+                        { text: "Effectuer un nettoyage de tartre et polir la surface des dents.", isCorrect: false, feedback: "Cette tâche préventive est accomplie par l'hygiéniste dentaire." },
+                        { text: "Soigner les caries profondes, réaliser des traitements de canal et procéder à des extractions chirurgicales de dents.", isCorrect: true, feedback: "Parfait ! Le dentiste effectue les chirurgies et restaurations invasives." },
+                        { text: "Prendre des radiographies dentaires pour documenter l'état osseux.", isCorrect: false, feedback: "L'hygiéniste peut tout à fait prendre les clichés sous ordonnance." }
+                    ]
+                },
+                {
+                    title: "Énigme : Transposition de textes écrits vs Traduction orale en direct",
+                    instruction: "Le domaine des langues distingue le travail sur les documents écrits de la parole spontanée. Qu'est-ce qui caractérise l'activité du professionnel de l'écrit ?",
+                    searchTip: "Consultez 'Traducteur-terminologue / traductrice-terminologue'.",
+                    options: [
+                        { text: "Traduire oralement et en direct les propos d'une assemblée politique.", isCorrect: false, feedback: "La transposition orale spontanée est le travail de l'interprète." },
+                        { text: "Transposer des textes écrits d'une langue à une autre en préservant le style, les nuances et la rigueur du sens original.", isCorrect: true, feedback: "Exact ! Le traducteur travaille sur les écrits et documents de façon posée." },
+                        { text: "Dispenser des cours de langue seconde en milieu scolaire.", isCorrect: false, feedback: "C'est le rôle de l'enseignant de langue." }
+                    ]
+                },
+                {
+                    title: "Énigme : Préparation de produits vs Validation clinique",
+                    instruction: "Le laboratoire de la pharmacie distingue le soutien matériel de l'avis thérapeutique. Quelle tâche est réservée au professionnel de l'Ordre (OPQ) ?",
+                    searchTip: "Comparez 'Pharmacien / pharmacienne' et 'Technicien / technicienne en pharmacie'.",
+                    options: [
+                        { text: "Accueillir les clients, compter les comprimés et étiqueter les contenants.", isCorrect: false, feedback: "C'est l'activité technique accomplie par l'assistant ou technicien en pharmacie." },
+                        { text: "Valider l'adéquation des ordonnances, conseiller les patients sur l'usage des produits et adapter les doses de traitement.", isCorrect: true, feedback: "Excellent ! Le jugement clinique et la validation finale incombent uniquement au pharmacien agréé." },
+                        { text: "Placer les commandes de renouvellement de matériel de laboratoire.", isCorrect: false, feedback: "Le technicien gère couramment les inventaires physiques." }
+                    ]
+                }
+            ],
+
+            // Mission 3 : Le Simulateur d'Orientation (12 questions)
+            mission3: [
+                {
+                    title: "Cas 1 : L'esprit technique à l'abri du froid",
+                    instruction: "Gabriel adore la construction de bâtiments et le design, mais il ne veut pas travailler physiquement sur les chantiers de construction par grand froid. De plus, il veut faire des études d'une durée maximale de 3 ans après son secondaire. Quel parcours lui correspond le mieux ?",
+                    searchTip: "Utilisez les filtres de MonEmploi dans les secteurs du bâtiment pour trouver le parfait compromis.",
+                    options: [
+                        { text: "Faire un DEP en Charpenterie-menuiserie", isCorrect: false, feedback: "Le charpentier travaille activement à l'extérieur sur le chantier physique, ce que Gabriel souhaite éviter." },
+                        { text: "Faire un DEC technique en technologie de l'architecture (3 ans)", isCorrect: true, feedback: "Parfait ! En 3 ans au Cégep, il apprendra à dessiner des maquettes à l'ordinateur confortablement en bureau." },
+                        { text: "Faire un Baccalauréat en architecture (Université)", isCorrect: false, feedback: "Ce titre professionnel d'architecte requiert un BAC + Maîtrise (5 à 6 ans d'études), ce qui dépasse ses critères." }
+                    ]
+                },
+                {
+                    title: "Cas 2 : L'ingénierie verte pour nos rivières",
+                    instruction: "Alice veut aider les municipalités du Québec à mieux traiter l'eau potable et assainir les cours d'eau. Elle souhaite faire des études universitaires scientifiques pour concevoir, planifier et signer des plans d'infrastructures majeurs. Quel est son parcours idéal ?",
+                    searchTip: "Cherchez les métiers environnementaux d'ingénierie.",
+                    options: [
+                        { text: "Un DEP en Traitement des eaux", isCorrect: false, feedback: "Le DEP forme à l'opération de machines, pas à la modélisation et signature d'infrastructures d'ingénierie complexes." },
+                        { text: "Un Baccalauréat en génie civil ou environnemental (Université)", isCorrect: true, feedback: "Absolument ! Pour concevoir des structures publiques complexes et porter le titre d'ingénieur(e), elle doit passer par l'Université." },
+                        { text: "Un DEC technique en techniques de laboratoire (Cégep)", isCorrect: false, feedback: "Le DEC technique prépare à l'analyse d'échantillons en laboratoire, pas au rôle de concepteur principal d'ouvrages." }
+                    ]
+                },
+                {
+                    title: "Cas 3 : Prêt pour le garage en un clin d'œil",
+                    instruction: "Maxime adore démonter des moteurs, changer des freins et faire des réparations physiques de précision sur des voitures. Il est très pragmatique, impatient de travailler et souhaite obtenir un diplôme reconnu en moins de 2 ans pour entrer rapidement dans un garage. Quelle est la voie idéale ?",
+                    searchTip: "Explorez les fiches liées à l'entretien de véhicules motorisés de niveau professionnel.",
+                    options: [
+                        { text: "Un DEP en Mécanique automobile", isCorrect: true, feedback: "Exact ! Le DEP en mécanique auto dure environ un an et demi et ouvre directement la porte aux ateliers de mécanique de terrain." },
+                        { text: "Un DEC technique en génie mécanique (3 ans)", isCorrect: false, feedback: "Le génie mécanique forme des concepteurs industriels de pièces de machines en entreprise, pas des mécaniciens d'atelier." },
+                        { text: "Un Baccalauréat universitaire en génie mécanique (4 ans)", isCorrect: false, feedback: "C'est une formation théorique extrêmement longue pour quelqu'un qui cherche un métier pratique immédiat." }
+                    ]
+                },
+                {
+                    title: "Cas 4 : L'alliée indispensable des cliniques vétérinaires",
+                    instruction: "Chloé souhaite passer ses journées à soigner des animaux de compagnie. Elle adore effectuer des prélèvements sanguins, prendre des radiographies, nettoyer les dents des animaux et assister le vétérinaire pendant les chirurgies. Elle ne souhaite pas faire plus de 3 ans d'études après son secondaire. Quel parcours lui convient ?",
+                    searchTip: "Trouvez la fiche liée à l'assistance clinique pour animaux au Cégep.",
+                    options: [
+                        { text: "Docteur en médecine vétérinaire (Université - 5 ans)", isCorrect: false, feedback: "Devenir vétérinaire prend un doctorat très contingenté d'au moins 5 ans à l'université, ce qui ne convient pas à son critère de durée." },
+                        { text: "Un DEC technique en Santé animale (3 ans au Cégep)", isCorrect: true, feedback: "Merveilleux ! En 3 ans au Cégep, elle obtiendra son diplôme pour accomplir toutes ces tâches techniques d'assistance vétérinaire." },
+                        { text: "Un DEP en Toilettage d'animaux", isCorrect: false, feedback: "Le toiletteur s'occupe de l'entretien esthétique, mais n'est pas autorisé à assister aux chirurgies cliniques ni à faire des examens." }
+                    ]
+                },
+                {
+                    title: "Cas 5 : L'as des chiffres et de la finance",
+                    instruction: "William s'intéresse à la haute finance, à l'administration d'entreprises et au fonctionnement de la bourse de Montréal. Il est très doué en mathématiques abstraites et est prêt à faire de longues études théoriques pour devenir un conseiller stratégique d'affaires de haut niveau. Quelle est la meilleure option ?",
+                    searchTip: "Cherchez les professions du domaine de la gestion financière d'envergure.",
+                    options: [
+                        { text: "Un DEP en Comptabilité", isCorrect: false, feedback: "Le DEP forme à la tenue de livres de base, insuffisant pour analyser des portefeuilles boursiers internationaux complexes." },
+                        { text: "Un DEC technique en gestion de commerces", isCorrect: false, feedback: "C'est une bonne base pour gérer un commerce local, mais insuffisant pour la finance stratégique de marché." },
+                        { text: "Un Baccalauréat en administration des affaires (B.A.A. - option finance ou économie)", isCorrect: true, feedback: "Parfait ! Le B.A.A. universitaire lui ouvrira grand les portes de la finance corporative et de l'analyse boursière." }
+                    ]
+                },
+                {
+                    title: "Cas 6 : Donner vie aux univers de pixels",
+                    instruction: "Léa est créative et passionnée par le domaine des jeux vidéo montréalais. Elle veut modéliser des personnages, animer des textures et travailler en équipe sur les prochains grands jeux. Elle désire intégrer l'industrie après une formation de 3 ans. Quel programme choisir au Cégep ?",
+                    searchTip: "Consultez les métiers du secteur de l'animation multimédia de niveau technique.",
+                    options: [
+                        { text: "Un DEC technique en Animation 3D et synthèse d'images (3 ans)", isCorrect: true, feedback: "Génial ! Ce DEC technique de 3 ans prépare directement au travail de création numérique dans les studios de jeux vidéo." },
+                        { text: "Un DEP en Dessin de bâtiment", isCorrect: false, feedback: "Le dessin de bâtiment sert à tracer des plans de construction immobilière, pas à animer des créatures virtuelles." },
+                        { text: "Un Baccalauréat en arts visuels", isCorrect: false, feedback: "Le BAC d'arts visuels est enrichissant mais s'oriente moins vers l'animation technique exigée en studio de développement de jeux." }
+                    ]
+                },
+                {
+                    title: "Cas 7 : Gardien de l'ordre sur nos routes",
+                    instruction: "Samuel veut veiller à la sécurité de la population en patrouillant sur les routes du Québec. Il sait qu'il doit obligatoirement passer par l'École nationale de police du Québec (ENPQ) à Nicolet, mais quel diplôme collégial préalable doit-il impérativement décrocher ?",
+                    searchTip: "Cherchez la formation d'accès pour patrouiller dans les municipalités de la province.",
+                    options: [
+                        { text: "Un DEP en Sécurité privée", isCorrect: false, feedback: "Ce DEP prépare aux postes de gardiens de sécurité ou agents privés, pas à la police municipale ni à la SQ." },
+                        { text: "Un DEC technique en Techniques policières (3 ans au Cégep)", isCorrect: true, feedback: "Excellent ! C'est le passage obligatoire de niveau collégial avant de pouvoir postuler à l'ENPQ pour sa formation de patrouilleur." },
+                        { text: "Un DEC préuniversitaire en Sciences humaines (2 ans)", isCorrect: false, feedback: "Bien que l'université offre des parcours d'accès, le DEC en techniques policières est le moyen le plus direct et valorisé au Québec." }
+                    ]
+                },
+                {
+                    title: "Cas 8 : Une vie d'aventure au cœur des forêts",
+                    instruction: "Mathieu adore la forêt canadienne, faire de la randonnée et travailler en milieu sauvage. Il souhaite mesurer les arbres, analyser la santé des boisés publics québécois et travailler à l'extérieur. Il ne souhaite pas de longues études universitaires et vise un parcours collégial de 3 ans. Quelle est sa meilleure option ?",
+                    searchTip: "Cherchez les fiches de technologie liées aux ressources forestières.",
+                    options: [
+                        { text: "Technologue forestier (DEC Technique de 3 ans)", isCorrect: true, feedback: "Merveilleux ! Le DEC de 3 ans en technologie forestière forme des experts de terrain indispensables pour l'aménagement durable de nos forêts." },
+                        { text: "Ingénieur forestier (Baccalauréat universitaire de 4 ans)", isCorrect: false, feedback: "L'ingénieur conçoit les plans généraux mais passe par un parcours universitaire plus théorique et long." },
+                        { text: "DEP en Élagage de arbres", isCorrect: false, feedback: "L'élagueur coupe les branches d'arbres en ville, ce qui ne correspond pas au désir d'aménagement de grands milieux sauvages." }
+                    ]
+                },
+                {
+                    title: "Cas 9 : L'amour du feu et de la haute gastronomie",
+                    instruction: "Sarah est passionnée de gastronomie. Elle veut apprendre à concevoir des plats créatifs, gérer une brigade de cuisiniers et travailler dans de grands restaurants montréalais. Elle désire une formation pratique, très concrète et rapide (moins de 2 ans d'études). Quel diplôme doit-elle viser ?",
+                    searchTip: "Consultez les formations professionnelles en alimentation et restauration.",
+                    options: [
+                        { text: "Un DEP en Cuisine", isCorrect: true, feedback: "Parfait ! Le DEP en Cuisine offre un apprentissage intensif et entièrement pratique pour être prêt en moins de 18 mois." },
+                        { text: "Un DEC en Gestion hôtelière (3 ans au Cégep)", isCorrect: false, feedback: "Ce DEC s'oriente vers la gestion administrative et l'accueil des hôtels, pas la confection de plats." },
+                        { text: "Un Baccalauréat en nutrition", isCorrect: false, feedback: "Le nutritionniste conseille les gens sur leur santé alimentaire, mais n'est pas un chef de cuisine." }
+                    ]
+                },
+                {
+                    title: "Cas 10 : Accompagner la vie à sa naissance",
+                    instruction: "Karine veut accompagner les futures mamans, suivre l'évolution de leur grossesse et assister de façon naturelle aux accouchements, à domicile ou dans des maisons de naissance au Québec. Elle est prête pour de longues études à l'université. Quel parcours doit-elle choisir ?",
+                    searchTip: "Explorez les fiches liées à la pratique d'accompagnement de maternité naturelle.",
+                    options: [
+                        { text: "Sage-femme (Baccalauréat universitaire en pratique sage-femme - 4 ans)", isCorrect: true, feedback: "Tout à fait ! Au Québec, cette pratique autonome requiert d'obtenir ce baccalauréat universitaire rigoureux d'une durée de 4 ans." },
+                        { text: "Médecin pédiatre (Doctorat universitaire de 9 ans)", isCorrect: false, feedback: "Le pédiatre soigne les enfants après la naissance, mais n'assure pas le suivi d'accompagnement physiologique global de la maman." },
+                        { text: "DEP en Assistance à la personne", isCorrect: false, feedback: "Ce DEP prépare aux fonctions de soutien de préposé aux bénéficiaires, pas de professionnelle autonome." }
+                    ]
+                },
+                {
+                    title: "Cas 11 : Forger les géants d'acier",
+                    instruction: "Julien veut assembler, souder et fabriquer de grandes structures d'acier pour des navires ou des édifices publics au Québec. Il veut un diplôme de métier manuel de terrain rapide (environ 15 mois d'études) pour être autonome et recherché. Quelle est sa voie ?",
+                    searchTip: "Consultez le domaine de la métallurgie et du soudage sur le site.",
+                    options: [
+                        { text: "Un DEP en Soudage-montage", isCorrect: true, feedback: "Félicitations ! Le DEP en soudage-montage est l'une des formations les plus payantes et en forte demande au Québec pour les amateurs d'activités concrètes." },
+                        { text: "Un DEC technique en génie métallurgique (3 ans)", isCorrect: false, feedback: "Ce technologue étudie la qualité des métaux en laboratoire de contrôle, sans souder lui-même sur les structures de chantiers." },
+                        { text: "Un Baccalauréat en génie des matériaux (Université)", isCorrect: false, feedback: "Ce parcours théorique de bureau d'études forme des ingénieurs spécialistes de l'innovation ou de l'achat de matériaux." }
+                    ]
+                },
+                {
+                    title: "Cas 12 : Transmettre la science aux adolescents",
+                    instruction: "Maya aime vulgariser les sciences et interagir avec les adolescents. Elle veut enseigner la chimie et la physique de niveau secondaire 4 et 5 dans une école publique au Québec. Quelle formation universitaire doit-elle obligatoirement obtenir ?",
+                    searchTip: "Regardez les fiches liées à l'enseignement général de niveau secondaire.",
+                    options: [
+                        { text: "Un Baccalauréat en enseignement au secondaire (B.Ens. - 4 ans d'études)", isCorrect: true, feedback: "Formidable ! L'obtention de ce brevet d'enseignement (BAC de 4 ans incluant d'importants stages) est exigée par le ministère de l'Éducation." },
+                        { text: "Un DEC en Sciences de la nature (2 ans au Cégep)", isCorrect: false, feedback: "Le DEC préuniversitaire n'accorde aucun brevet d'enseignement officiel, il s'agit d'un tremplin d'accès à l'université." },
+                        { text: "Un certificat en animation jeunesse (1 an)", isCorrect: false, feedback: "Ce certificat permet d'animer des groupes de loisirs, mais pas d'obtenir une charge de cours académique stable au secondaire public." }
+                    ]
+                }
+            ]
+        };
+
+        // État de l'application
+        let state = {
+            player: "",
+            partner: "",
+            score: 0,
+            currentMission: 1,
+            currentQuestionIdx: 0,
+            earnedBadges: []
+        };
+
+        // Lancement de l'aventure
+        function startGame() {
+            const pName = document.getElementById('player-name').value.trim();
+            const ptName = document.getElementById('partner-name').value.trim();
+
+            if (!pName || !ptName) {
+                // Création d'une alerte personnalisée esthétique
+                showWarningModal("Champs requis", "Veuillez svp inscrire votre nom complet ainsi que celui de votre partenaire de table pour enregistrer l'activité.");
+                return;
+            }
+
+            state.player = pName;
+            state.partner = ptName;
+
+            // Mise à jour de l'affichage
+            document.getElementById('sidebar-player-1').innerText = pName;
+            document.getElementById('sidebar-player-2').innerText = ptName;
+
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+
+            loadMission(1);
+        }
+
+        // Charger une mission particulière
+        function loadMission(num) {
+            state.currentMission = num;
+            state.currentQuestionIdx = 0;
+
+            // Mettre à jour l'état visuel des onglets
+            for (let i = 1; i <= 3; i++) {
+                const tab = document.getElementById(`tab-${i}`);
+                if (i === num) {
+                    tab.className = "px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 shrink-0 bg-indigo-600 text-white shadow-md animate-pulse";
+                    tab.disabled = false;
+                } else if (i < num) {
+                    tab.className = "px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 shrink-0 bg-emerald-50 text-emerald-700 border border-emerald-100";
+                    tab.disabled = false;
+                } else {
+                    tab.className = "px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 shrink-0 bg-slate-50 text-slate-400 cursor-not-allowed";
+                    tab.disabled = true;
+                }
+            }
+
+            renderQuestion();
+        }
+
+        // Rendu de la question courante de la mission active
+        function renderQuestion() {
+            const missionKey = `mission${state.currentMission}`;
+            const questions = database[missionKey];
+            const q = questions[state.currentQuestionIdx];
+
+            const wrapper = document.getElementById('mission-wrapper');
+
+            const optionsHtml = q.options.map((opt, idx) => `
+                <button onclick="checkAnswer(${idx})" class="w-full text-left p-4 rounded-xl border-2 border-slate-100 hover:border-indigo-500 hover:bg-indigo-50/30 transition flex justify-between items-center group">
+                    <span class="text-sm font-semibold text-slate-700 group-hover:text-indigo-950">${opt.text}</span>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-indigo-600 transition-transform group-hover:translate-x-1"></i>
+                </button>
+            `).join('');
+
+            wrapper.innerHTML = `
+                <div class="space-y-6">
+                    <!-- Statut et progression de la question -->
+                    <div class="flex justify-between items-center">
+                        <span class="bg-indigo-100 text-indigo-800 text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-md">
+                            Mission ${state.currentMission} : ${getMissionTitle(state.currentMission)}
+                        </span>
+                        <span class="text-xs text-slate-400 font-bold">
+                            Question ${state.currentQuestionIdx + 1} / ${questions.length}
+                        </span>
+                    </div>
+
+                    <!-- Enoncé principal -->
+                    <div>
+                        <h3 class="text-xl sm:text-2xl font-black text-slate-900 leading-snug">${q.title}</h3>
+                        <p class="text-sm text-slate-600 mt-2 leading-relaxed bg-slate-50/50 p-4 rounded-xl border border-slate-100">${q.instruction}</p>
+                    </div>
+
+                    <!-- Module Astuce de recherche -->
+                    <div class="bg-amber-50 border border-amber-200/50 rounded-xl p-4 flex gap-3">
+                        <div class="text-amber-600 shrink-0">
+                            <i data-lucide="search" class="w-5 h-5"></i>
+                        </div>
+                        <div class="text-xs text-amber-900 leading-relaxed">
+                            <strong class="font-extrabold block">Aide à la recherche :</strong>
+                            ${q.searchTip}
+                        </div>
+                    </div>
+
+                    <!-- Liste d'options cliquables -->
+                    <div class="space-y-3 pt-2">
+                        ${optionsHtml}
+                    </div>
+                </div>
+            `;
+
+            lucide.createIcons();
+            updateProgress();
+        }
+
+        // Validation de la réponse
+        function checkAnswer(selectedIdx) {
+            const missionKey = `mission${state.currentMission}`;
+            const questions = database[missionKey];
+            const q = questions[state.currentQuestionIdx];
+            const opt = q.options[selectedIdx];
+
+            const wrapper = document.getElementById('mission-wrapper');
+
+            if (opt.isCorrect) {
+                state.score += 50;
+                document.getElementById('score-badge').innerText = `${state.score} pts`;
+                playSound('success');
+
+                wrapper.innerHTML = `
+                    <div class="text-center py-8 space-y-6 animate-pop">
+                        <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-sm">
+                            <i data-lucide="smile" class="w-9 h-9"></i>
+                        </div>
+                        <div class="space-y-2">
+                            <h4 class="text-2xl font-extrabold text-emerald-950">Excellente analyse !</h4>
+                            <p class="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">${opt.feedback}</p>
+                        </div>
+                        <button onclick="goToNextStep()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold rounded-xl text-xs shadow-md transition inline-flex items-center gap-2">
+                            Continuer l'enquête <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `;
+            } else {
+                playSound('error');
+                wrapper.innerHTML = `
+                    <div class="text-center py-8 space-y-6 animate-pop">
+                        <div class="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto shadow-sm">
+                            <i data-lucide="frown" class="w-9 h-9"></i>
+                        </div>
+                        <div class="space-y-2">
+                            <h4 class="text-2xl font-extrabold text-rose-950">Ce n'est pas tout à fait ça...</h4>
+                            <p class="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
+                                <strong>Indice manqué :</strong> ${opt.feedback || "Vérifiez à nouveau la formation et les tâches associées à cette profession."}
+                            </p>
+                        </div>
+                        <button onclick="renderQuestion()" class="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-extrabold rounded-xl text-xs shadow-md transition inline-flex items-center gap-2">
+                            <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Retenter l'analyse
+                        </button>
+                    </div>
+                `;
+            }
+            lucide.createIcons();
+        }
+
+        // Progression de l'étape
+        function goToNextStep() {
+            const missionKey = `mission${state.currentMission}`;
+            const questions = database[missionKey];
+
+            if (state.currentQuestionIdx < questions.length - 1) {
+                state.currentQuestionIdx++;
+                renderQuestion();
+            } else {
+                // La mission active est complètement achevée !
+                unlockBadge(state.currentMission);
+                
+                if (state.currentMission < 3) {
+                    state.currentMission++;
+                    loadMission(state.currentMission);
+                } else {
+                    // Fin globale du jeu
+                    finishGame();
+                }
+            }
+        }
+
+        // Déverrouillage d'un badge
+        function unlockBadge(missionNum) {
+            let badgeName = "";
+            let badgeIcon = "";
+            let badgeColor = "";
+
+            if (missionNum === 1) {
+                badgeName = "Pro-Parcours";
+                badgeIcon = "graduation-cap";
+                badgeColor = "text-amber-500 bg-amber-50 border-amber-200";
+            } else if (missionNum === 2) {
+                badgeName = "Pro-Tâches";
+                badgeIcon = "clipboard-check";
+                badgeColor = "text-blue-500 bg-blue-50 border-blue-200";
+            } else if (missionNum === 3) {
+                badgeName = "Expert";
+                badgeIcon = "sparkles";
+                badgeColor = "text-emerald-500 bg-emerald-50 border-emerald-200";
+            }
+
+            // Éviter d'ajouter des doublons
+            if (!state.earnedBadges.some(b => b.name === badgeName)) {
+                state.earnedBadges.push({ name: badgeName, icon: badgeIcon, color: badgeColor });
+            }
+            renderBadges();
+        }
+
+        // Rendu des badges accumulés
+        function renderBadges() {
+            const container = document.getElementById('badges-container');
+            if (state.earnedBadges.length === 0) {
+                container.innerHTML = `<span class="text-slate-300">Aucun</span>`;
+                return;
+            }
+
+            container.innerHTML = state.earnedBadges.map(badge => `
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[9px] font-bold border ${badge.color}" title="${badge.name}">
+                    <i data-lucide="${badge.icon}" class="w-3.5 h-3.5"></i>
+                    ${badge.name}
+                </span>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        // Mise à jour de la barre d'avancement
+        function updateProgress() {
+            let totalQuestions = 0;
+            let currentGlobalIndex = 0;
+
+            for(let i = 1; i <= 3; i++) {
+                totalQuestions += database['mission' + i].length;
+                if (i < state.currentMission) {
+                    currentGlobalIndex += database['mission' + i].length;
+                }
+            }
+            currentGlobalIndex += state.currentQuestionIdx;
+
+            const percentage = Math.round((currentGlobalIndex / totalQuestions) * 100);
+
+            document.getElementById('progress-bar').style.width = `${percentage}%`;
+            document.getElementById('progress-text').innerText = `${percentage}%`;
+        }
+
+        // Nom convivial des missions
+        function getMissionTitle(num) {
+            switch(num) {
+                case 1: return "Décodeur de Parcours";
+                case 2: return "Inspecteur de Tâches";
+                case 3: return "Simulateur d'Orientation";
+                default: return "";
+            }
+        }
+
+        // Fin de l'aventure
+        function finishGame() {
+            playSound('victory');
+            document.getElementById('progress-bar').style.width = '100%';
+            document.getElementById('progress-text').innerText = '100%';
+
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('victory-screen').classList.remove('hidden');
+
+            document.getElementById('cert-names').innerText = `${state.player} & ${state.partner}`;
+            document.getElementById('cert-score').innerText = `${state.score} pts`;
+        }
+
+        // Réinitialisation globale de l'aventure
+        function restartGame() {
+            state.score = 0;
+            state.currentMission = 1;
+            state.currentQuestionIdx = 0;
+            state.earnedBadges = [];
+
+            document.getElementById('score-badge').innerText = "0 pts";
+            document.getElementById('progress-bar').style.width = "0%";
+            document.getElementById('progress-text').innerText = "0%";
+            renderBadges();
+
+            document.getElementById('victory-screen').classList.add('hidden');
+            document.getElementById('welcome-screen').classList.remove('hidden');
+        }
+
+        // Modal d'erreur personnalisé
+        function showWarningModal(title, msg) {
+            const modal = document.createElement('div');
+            modal.className = "fixed inset-0 bg-slate-900/60 flex items-center justify-center p-4 z-50 animate-pop";
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 text-center space-y-4">
+                    <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto">
+                        <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-extrabold text-slate-900">${title}</h4>
+                        <p class="text-xs text-slate-500 mt-2 leading-relaxed">${msg}</p>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition">
+                        Compris
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>
