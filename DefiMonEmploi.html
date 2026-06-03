@@ -16,21 +16,13 @@
             background: radial-gradient(circle at top right, #eef2ff, #f8fafc);
         }
 
-        /* Animations personnalisées */
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
-        }
-        .animate-float {
-            animation: float 4s ease-in-out infinite;
-        }
-
-        @keyframes pop {
-            0% { transform: scale(0.95); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .animate-pop {
-            animation: pop 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        /* Interface volontairement plus stable visuellement */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+                scroll-behavior: auto !important;
+            }
         }
 
         /* Hover de cartes */
@@ -43,13 +35,13 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between">
 
-    <!-- Audio Engine Toggle & Header -->
+    <!-- Header -->
     <header class="bg-slate-900 text-white shadow-xl sticky top-0 z-50 border-b border-slate-800">
         <div class="max-w-6xl mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-4">
             
             <!-- Logo & Title -->
             <div class="flex items-center gap-3">
-                <div class="p-2.5 bg-gradient-to-tr from-indigo-500 to-blue-600 rounded-xl animate-float">
+                <div class="p-2.5 bg-gradient-to-tr from-indigo-500 to-blue-600 rounded-xl">
                     <i data-lucide="compass" class="w-6 h-6 text-yellow-300"></i>
                 </div>
                 <div>
@@ -68,11 +60,6 @@
                     monemploi.com
                 </a>
 
-                <!-- Option de son audio (généré synthétiquement) -->
-                <button onclick="toggleAudio()" id="audio-toggle" class="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white transition flex items-center gap-1.5 text-xs">
-                    <i data-lucide="volume-2" id="audio-icon" class="w-4 h-4"></i>
-                    <span>Son : Activé</span>
-                </button>
             </div>
 
         </div>
@@ -82,7 +69,7 @@
     <main class="max-w-6xl mx-auto px-4 py-8 flex-grow w-full flex flex-col justify-center">
 
         <!-- ================= ÉCRAN D'ACCUEIL ================= -->
-        <div id="welcome-screen" class="max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl p-8 border border-slate-100 animate-pop">
+        <div id="welcome-screen" class="max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl p-8 border border-slate-100">
             <div class="text-center mb-8">
                 <span class="inline-block bg-indigo-50 text-indigo-700 text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-full mb-3">
                     Édition Marathon 36 Énigmes
@@ -226,7 +213,7 @@
                 </div>
 
                 <!-- Boîtier de jeu actif -->
-                <div id="mission-wrapper" class="bg-white rounded-3xl shadow-md border border-slate-100 p-6 sm:p-8 animate-pop">
+                <div id="mission-wrapper" class="bg-white rounded-3xl shadow-md border border-slate-100 p-6 sm:p-8">
                     <!-- Généré dynamiquement en JS -->
                 </div>
 
@@ -235,11 +222,11 @@
         </div>
 
         <!-- ================= ÉCRAN DE FIN DE PARTIE / CERTIFICAT ================= -->
-        <div id="victory-screen" class="hidden max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl p-10 border border-slate-100 text-center relative overflow-hidden animate-pop">
+        <div id="victory-screen" class="hidden max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl p-10 border border-slate-100 text-center relative overflow-hidden">
             <div class="absolute -top-10 -right-10 w-40 h-40 bg-indigo-100 rounded-full blur-3xl opacity-50"></div>
             <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-indigo-100 rounded-full blur-3xl opacity-50"></div>
 
-            <div class="w-20 h-20 bg-gradient-to-tr from-emerald-400 to-teal-500 text-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg animate-float">
+            <div class="w-20 h-20 bg-gradient-to-tr from-emerald-400 to-teal-500 text-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
                 <i data-lucide="award" class="w-10 h-10"></i>
             </div>
 
@@ -293,75 +280,6 @@
 
     <!-- LOGIQUE DE JEU INTERACTIVE -->
     <script>
-        // --- SYNTHÉTISEUR AUDIO DE JEU (WEB AUDIO API) ---
-        let audioEnabled = true;
-        let audioCtx = null;
-
-        function playSound(type) {
-            if (!audioEnabled) return;
-            try {
-                if (!audioCtx) {
-                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                }
-                
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-
-                if (type === 'success') {
-                    // Petite mélodie ascendante joyeuse
-                    const now = audioCtx.currentTime;
-                    osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(523.25, now); // C5
-                    osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
-                    osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
-                    gain.gain.setValueAtTime(0.15, now);
-                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-                    osc.start(now);
-                    osc.stop(now + 0.4);
-                } else if (type === 'error') {
-                    // Son de bourdonnement court
-                    const now = audioCtx.currentTime;
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(150, now);
-                    osc.frequency.linearRampToValueAtTime(80, now + 0.3);
-                    gain.gain.setValueAtTime(0.2, now);
-                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-                    osc.start(now);
-                    osc.stop(now + 0.3);
-                } else if (type === 'victory') {
-                    // Fanfare de victoire
-                    const now = audioCtx.currentTime;
-                    osc.type = 'sine';
-                    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
-                    notes.forEach((freq, idx) => {
-                        osc.frequency.setValueAtTime(freq, now + idx * 0.15);
-                    });
-                    gain.gain.setValueAtTime(0.2, now);
-                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
-                    osc.start(now);
-                    osc.stop(now + 0.8);
-                }
-            } catch (e) {
-                console.log("Audio non supporté ou bloqué par le navigateur", e);
-            }
-        }
-
-        function toggleAudio() {
-            audioEnabled = !audioEnabled;
-            const btn = document.getElementById('audio-toggle');
-            const icon = document.getElementById('audio-icon');
-            if (audioEnabled) {
-                btn.className = "p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white transition flex items-center gap-1.5 text-xs";
-                btn.innerHTML = `<i data-lucide="volume-2" class="w-4 h-4"></i> <span>Son : Activé</span>`;
-            } else {
-                btn.className = "p-2 rounded-lg bg-slate-800 text-slate-500 hover:text-white transition flex items-center gap-1.5 text-xs";
-                btn.innerHTML = `<i data-lucide="volume-x" class="w-4 h-4"></i> <span>Son : Désactivé</span>`;
-            }
-            lucide.createIcons();
-        }
-
         // --- BANQUE DE QUESTIONS ET SYSTÈME DE JEU ---
         // Basé sur monemploi.com/metiers-et-professions
         const database = {
@@ -745,8 +663,57 @@
             score: 0,
             currentMission: 1,
             currentQuestionIdx: 0,
+            currentQuestionKey: "",
+            currentOptions: [],
             earnedBadges: []
         };
+
+        const responseVariants = {
+            successTitles: ["Excellente analyse !", "Bonne réponse !", "Bien joué !", "Tu l'as trouvé !"],
+            successButtons: ["Continuer", "Poursuivre", "Question suivante", "On avance"],
+            errorTitles: ["Ce n'est pas tout à fait ça...", "Pas encore...", "Presque !", "Essaie une autre piste"],
+            errorButtons: ["Réessayer", "Retenter", "Revoir la question", "Tenter de nouveau"]
+        };
+
+        function initializeIcons() {
+            if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                lucide.createIcons();
+            }
+        }
+
+        function pickRandom(items) {
+            return items[Math.floor(Math.random() * items.length)];
+        }
+
+        function shuffleArray(items) {
+            const array = [...items];
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function updateScoreDisplays() {
+            const scoreText = `${state.score} pts`;
+            document.getElementById('score-badge').innerText = scoreText;
+            document.getElementById('cert-score').innerText = scoreText;
+        }
+
+        function getCurrentQuestionKey() {
+            return `${state.currentMission}-${state.currentQuestionIdx}`;
+        }
+
+        function getCurrentOptions(question) {
+            const questionKey = getCurrentQuestionKey();
+
+            if (state.currentQuestionKey !== questionKey || state.currentOptions.length === 0) {
+                state.currentQuestionKey = questionKey;
+                state.currentOptions = shuffleArray(question.options);
+            }
+
+            return state.currentOptions;
+        }
 
         // Lancement de l'aventure
         function startGame() {
@@ -776,12 +743,14 @@
         function loadMission(num) {
             state.currentMission = num;
             state.currentQuestionIdx = 0;
+            state.currentQuestionKey = "";
+            state.currentOptions = [];
 
             // Mettre à jour l'état visuel des onglets
             for (let i = 1; i <= 3; i++) {
                 const tab = document.getElementById(`tab-${i}`);
                 if (i === num) {
-                    tab.className = "px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 shrink-0 bg-indigo-600 text-white shadow-md animate-pulse";
+                    tab.className = "px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 shrink-0 bg-indigo-600 text-white shadow-md";
                     tab.disabled = false;
                 } else if (i < num) {
                     tab.className = "px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 shrink-0 bg-emerald-50 text-emerald-700 border border-emerald-100";
@@ -802,11 +771,12 @@
             const q = questions[state.currentQuestionIdx];
 
             const wrapper = document.getElementById('mission-wrapper');
+            const currentOptions = getCurrentOptions(q);
 
-            const optionsHtml = q.options.map((opt, idx) => `
+            const optionsHtml = currentOptions.map((opt, idx) => `
                 <button onclick="checkAnswer(${idx})" class="w-full text-left p-4 rounded-xl border-2 border-slate-100 hover:border-indigo-500 hover:bg-indigo-50/30 transition flex justify-between items-center group">
                     <span class="text-sm font-semibold text-slate-700 group-hover:text-indigo-950">${opt.text}</span>
-                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-indigo-600 transition-transform group-hover:translate-x-1"></i>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-indigo-600 transition"></i>
                 </button>
             `).join('');
 
@@ -846,7 +816,7 @@
                 </div>
             `;
 
-            lucide.createIcons();
+            initializeIcons();
             updateProgress();
         }
 
@@ -855,49 +825,51 @@
             const missionKey = `mission${state.currentMission}`;
             const questions = database[missionKey];
             const q = questions[state.currentQuestionIdx];
-            const opt = q.options[selectedIdx];
+            const opt = state.currentOptions[selectedIdx];
 
             const wrapper = document.getElementById('mission-wrapper');
 
             if (opt.isCorrect) {
+                const successTitle = pickRandom(responseVariants.successTitles);
+                const successButton = pickRandom(responseVariants.successButtons);
                 state.score += 50;
-                document.getElementById('score-badge').innerText = `${state.score} pts`;
-                playSound('success');
+                updateScoreDisplays();
 
                 wrapper.innerHTML = `
-                    <div class="text-center py-8 space-y-6 animate-pop">
+                    <div class="text-center py-8 space-y-6">
                         <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-sm">
                             <i data-lucide="smile" class="w-9 h-9"></i>
                         </div>
                         <div class="space-y-2">
-                            <h4 class="text-2xl font-extrabold text-emerald-950">Excellente analyse !</h4>
+                            <h4 class="text-2xl font-extrabold text-emerald-950">${successTitle}</h4>
                             <p class="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">${opt.feedback}</p>
                         </div>
                         <button onclick="goToNextStep()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold rounded-xl text-xs shadow-md transition inline-flex items-center gap-2">
-                            Continuer l'enquête <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                            ${successButton} <i data-lucide="arrow-right" class="w-4 h-4"></i>
                         </button>
                     </div>
                 `;
             } else {
-                playSound('error');
+                const errorTitle = pickRandom(responseVariants.errorTitles);
+                const errorButton = pickRandom(responseVariants.errorButtons);
                 wrapper.innerHTML = `
-                    <div class="text-center py-8 space-y-6 animate-pop">
+                    <div class="text-center py-8 space-y-6">
                         <div class="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto shadow-sm">
                             <i data-lucide="frown" class="w-9 h-9"></i>
                         </div>
                         <div class="space-y-2">
-                            <h4 class="text-2xl font-extrabold text-rose-950">Ce n'est pas tout à fait ça...</h4>
+                            <h4 class="text-2xl font-extrabold text-rose-950">${errorTitle}</h4>
                             <p class="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
                                 <strong>Indice manqué :</strong> ${opt.feedback || "Vérifiez à nouveau la formation et les tâches associées à cette profession."}
                             </p>
                         </div>
                         <button onclick="renderQuestion()" class="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-extrabold rounded-xl text-xs shadow-md transition inline-flex items-center gap-2">
-                            <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Retenter l'analyse
+                            <i data-lucide="rotate-ccw" class="w-4 h-4"></i> ${errorButton}
                         </button>
                     </div>
                 `;
             }
-            lucide.createIcons();
+            initializeIcons();
         }
 
         // Progression de l'étape
@@ -907,6 +879,8 @@
 
             if (state.currentQuestionIdx < questions.length - 1) {
                 state.currentQuestionIdx++;
+                state.currentQuestionKey = "";
+                state.currentOptions = [];
                 renderQuestion();
             } else {
                 // La mission active est complètement achevée !
@@ -964,7 +938,7 @@
                 </span>
             `).join('');
 
-            lucide.createIcons();
+            initializeIcons();
         }
 
         // Mise à jour de la barre d'avancement
@@ -998,7 +972,6 @@
 
         // Fin de l'aventure
         function finishGame() {
-            playSound('victory');
             document.getElementById('progress-bar').style.width = '100%';
             document.getElementById('progress-text').innerText = '100%';
 
@@ -1006,7 +979,8 @@
             document.getElementById('victory-screen').classList.remove('hidden');
 
             document.getElementById('cert-names').innerText = `${state.player} & ${state.partner}`;
-            document.getElementById('cert-score').innerText = `${state.score} pts`;
+            updateScoreDisplays();
+            initializeIcons();
         }
 
         // Réinitialisation globale de l'aventure
@@ -1014,9 +988,11 @@
             state.score = 0;
             state.currentMission = 1;
             state.currentQuestionIdx = 0;
+            state.currentQuestionKey = "";
+            state.currentOptions = [];
             state.earnedBadges = [];
 
-            document.getElementById('score-badge').innerText = "0 pts";
+            updateScoreDisplays();
             document.getElementById('progress-bar').style.width = "0%";
             document.getElementById('progress-text').innerText = "0%";
             renderBadges();
@@ -1028,7 +1004,7 @@
         // Modal d'erreur personnalisé
         function showWarningModal(title, msg) {
             const modal = document.createElement('div');
-            modal.className = "fixed inset-0 bg-slate-900/60 flex items-center justify-center p-4 z-50 animate-pop";
+            modal.className = "fixed inset-0 bg-slate-900/60 flex items-center justify-center p-4 z-50";
             modal.innerHTML = `
                 <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 text-center space-y-4">
                     <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto">
@@ -1044,8 +1020,13 @@
                 </div>
             `;
             document.body.appendChild(modal);
-            lucide.createIcons();
+            initializeIcons();
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateScoreDisplays();
+            initializeIcons();
+        });
     </script>
 </body>
 </html>
