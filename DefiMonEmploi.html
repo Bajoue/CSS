@@ -274,7 +274,12 @@
     <footer class="bg-slate-900 text-slate-400 border-t border-slate-800 py-6 text-center text-xs">
         <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3">
             <p>© 2026 • Activité pédagogique libre pour les écoles secondaires du Québec.</p>
-            <p class="text-slate-500 text-[10px]">Conçu pour s'aligner sur le programme d'Orientation scolaire (PPO).</p>
+            <div class="flex flex-col items-center sm:items-end gap-1">
+                <p class="text-slate-500 text-[10px]">Conçu pour s'aligner sur le programme d'Orientation scolaire (PPO).</p>
+                <a href="#" onclick="confirmResetProgress(event)" class="text-[10px] text-slate-500 hover:text-slate-300 underline underline-offset-4 transition">
+                    Réinitialiser la progression enregistrée
+                </a>
+            </div>
         </div>
     </footer>
 
@@ -656,17 +661,25 @@
             ]
         };
 
+        const STORAGE_KEY = 'DefiMonEmploi.html-progress-v1';
+
+        function getInitialState() {
+            return {
+                player: "",
+                partner: "",
+                score: 0,
+                currentMission: 1,
+                currentQuestionIdx: 0,
+                currentQuestionKey: "",
+                currentOptions: [],
+                earnedBadges: [],
+                currentScreen: "welcome",
+                feedback: null
+            };
+        }
+
         // État de l'application
-        let state = {
-            player: "",
-            partner: "",
-            score: 0,
-            currentMission: 1,
-            currentQuestionIdx: 0,
-            currentQuestionKey: "",
-            currentOptions: [],
-            earnedBadges: []
-        };
+        let state = getInitialState();
 
         const responseVariants = {
             successTitles: ["Excellente analyse !", "Bonne réponse !", "Bien joué !", "Tu l'as trouvé !"],
@@ -715,6 +728,136 @@
             return state.currentOptions;
         }
 
+        function saveState() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            } catch (error) {
+                console.warn('Impossible d’enregistrer la progression.', error);
+            }
+        }
+
+        function loadSavedState() {
+            try {
+                const rawState = localStorage.getItem(STORAGE_KEY);
+                if (!rawState) {
+                    return;
+                }
+
+                const parsedState = JSON.parse(rawState);
+                state = {
+                    ...getInitialState(),
+                    ...parsedState,
+                    earnedBadges: Array.isArray(parsedState.earnedBadges) ? parsedState.earnedBadges : [],
+                    currentOptions: Array.isArray(parsedState.currentOptions) ? parsedState.currentOptions : [],
+                    feedback: parsedState.feedback || null
+                };
+            } catch (error) {
+                console.warn('Impossible de restaurer la progression.', error);
+                state = getInitialState();
+            }
+        }
+
+        function clearSavedState() {
+            try {
+                localStorage.removeItem(STORAGE_KEY);
+            } catch (error) {
+                console.warn('Impossible de supprimer la progression enregistrée.', error);
+            }
+        }
+
+        function syncIdentityDisplays() {
+            document.getElementById('player-name').value = state.player;
+            document.getElementById('partner-name').value = state.partner;
+            document.getElementById('sidebar-player-1').innerText = state.player || 'Nom Joueur';
+            document.getElementById('sidebar-player-2').innerText = state.partner || 'Nom Partenaire';
+            document.getElementById('cert-names').innerText = state.player && state.partner ? `${state.player} & ${state.partner}` : 'Nom Joueur & Nom Partenaire';
+        }
+
+        function showScreen(screenName) {
+            state.currentScreen = screenName;
+            document.getElementById('welcome-screen').classList.toggle('hidden', screenName !== 'welcome');
+            document.getElementById('game-screen').classList.toggle('hidden', screenName !== 'game');
+            document.getElementById('victory-screen').classList.toggle('hidden', screenName !== 'victory');
+        }
+
+        function applyMissionTabs() {
+            for (let i = 1; i <= 3; i++) {
+                const tab = document.getElementById(`tab-${i}`);
+                if (i === state.currentMission) {
+                    tab.className = "px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 shrink-0 bg-indigo-600 text-white shadow-md";
+                    tab.disabled = false;
+                } else if (i < state.currentMission) {
+                    tab.className = "px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 shrink-0 bg-emerald-50 text-emerald-700 border border-emerald-100";
+                    tab.disabled = false;
+                } else {
+                    tab.className = "px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 shrink-0 bg-slate-50 text-slate-400 cursor-not-allowed";
+                    tab.disabled = true;
+                }
+            }
+        }
+
+        function renderFeedback() {
+            if (!state.feedback) {
+                renderQuestion();
+                return;
+            }
+
+            const wrapper = document.getElementById('mission-wrapper');
+            const isSuccess = state.feedback.type === 'success';
+
+            wrapper.innerHTML = isSuccess ? `
+                <div class="text-center py-8 space-y-6">
+                    <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-sm">
+                        <i data-lucide="smile" class="w-9 h-9"></i>
+                    </div>
+                    <div class="space-y-2">
+                        <h4 class="text-2xl font-extrabold text-emerald-950">${state.feedback.title}</h4>
+                        <p class="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">${state.feedback.message}</p>
+                    </div>
+                    <button onclick="goToNextStep()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold rounded-xl text-xs shadow-md transition inline-flex items-center gap-2">
+                        ${state.feedback.buttonLabel} <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            ` : `
+                <div class="text-center py-8 space-y-6">
+                    <div class="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto shadow-sm">
+                        <i data-lucide="frown" class="w-9 h-9"></i>
+                    </div>
+                    <div class="space-y-2">
+                        <h4 class="text-2xl font-extrabold text-rose-950">${state.feedback.title}</h4>
+                        <p class="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
+                            <strong>Indice manqué :</strong> ${state.feedback.message}
+                        </p>
+                    </div>
+                    <button onclick="returnToQuestion()" class="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-extrabold rounded-xl text-xs shadow-md transition inline-flex items-center gap-2">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i> ${state.feedback.buttonLabel}
+                    </button>
+                </div>
+            `;
+
+            showScreen('game');
+            syncIdentityDisplays();
+            applyMissionTabs();
+            updateProgress();
+            initializeIcons();
+        }
+
+        function returnToQuestion() {
+            state.feedback = null;
+            renderQuestion();
+        }
+
+        function confirmResetProgress(event) {
+            event.preventDefault();
+
+            const confirmed = window.confirm("Voulez-vous vraiment effacer la progression enregistrée sur ce navigateur pour DefiMonEmploi.html ?");
+            if (!confirmed) {
+                return;
+            }
+
+            restartGame();
+        }
+
         // Lancement de l'aventure
         function startGame() {
             const pName = document.getElementById('player-name').value.trim();
@@ -728,13 +871,8 @@
 
             state.player = pName;
             state.partner = ptName;
-
-            // Mise à jour de l'affichage
-            document.getElementById('sidebar-player-1').innerText = pName;
-            document.getElementById('sidebar-player-2').innerText = ptName;
-
-            document.getElementById('welcome-screen').classList.add('hidden');
-            document.getElementById('game-screen').classList.remove('hidden');
+            state.currentScreen = 'game';
+            syncIdentityDisplays();
 
             loadMission(1);
         }
@@ -745,22 +883,10 @@
             state.currentQuestionIdx = 0;
             state.currentQuestionKey = "";
             state.currentOptions = [];
+            state.feedback = null;
+            state.currentScreen = 'game';
 
-            // Mettre à jour l'état visuel des onglets
-            for (let i = 1; i <= 3; i++) {
-                const tab = document.getElementById(`tab-${i}`);
-                if (i === num) {
-                    tab.className = "px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 shrink-0 bg-indigo-600 text-white shadow-md";
-                    tab.disabled = false;
-                } else if (i < num) {
-                    tab.className = "px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 shrink-0 bg-emerald-50 text-emerald-700 border border-emerald-100";
-                    tab.disabled = false;
-                } else {
-                    tab.className = "px-4 py-2.5 rounded-xl font-bold text-xs transition flex items-center gap-2 shrink-0 bg-slate-50 text-slate-400 cursor-not-allowed";
-                    tab.disabled = true;
-                }
-            }
-
+            applyMissionTabs();
             renderQuestion();
         }
 
@@ -772,6 +898,11 @@
 
             const wrapper = document.getElementById('mission-wrapper');
             const currentOptions = getCurrentOptions(q);
+
+            state.feedback = null;
+            showScreen('game');
+            syncIdentityDisplays();
+            applyMissionTabs();
 
             const optionsHtml = currentOptions.map((opt, idx) => `
                 <button onclick="checkAnswer(${idx})" class="w-full text-left p-4 rounded-xl border-2 border-slate-100 hover:border-indigo-500 hover:bg-indigo-50/30 transition flex justify-between items-center group">
@@ -816,6 +947,7 @@
                 </div>
             `;
 
+            saveState();
             initializeIcons();
             updateProgress();
         }
@@ -825,51 +957,29 @@
             const missionKey = `mission${state.currentMission}`;
             const questions = database[missionKey];
             const q = questions[state.currentQuestionIdx];
-            const opt = state.currentOptions[selectedIdx];
-
-            const wrapper = document.getElementById('mission-wrapper');
+            const currentOptions = state.currentOptions.length ? state.currentOptions : getCurrentOptions(q);
+            const opt = currentOptions[selectedIdx];
 
             if (opt.isCorrect) {
-                const successTitle = pickRandom(responseVariants.successTitles);
-                const successButton = pickRandom(responseVariants.successButtons);
                 state.score += 50;
+                state.feedback = {
+                    type: 'success',
+                    title: pickRandom(responseVariants.successTitles),
+                    buttonLabel: pickRandom(responseVariants.successButtons),
+                    message: opt.feedback
+                };
                 updateScoreDisplays();
-
-                wrapper.innerHTML = `
-                    <div class="text-center py-8 space-y-6">
-                        <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-sm">
-                            <i data-lucide="smile" class="w-9 h-9"></i>
-                        </div>
-                        <div class="space-y-2">
-                            <h4 class="text-2xl font-extrabold text-emerald-950">${successTitle}</h4>
-                            <p class="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">${opt.feedback}</p>
-                        </div>
-                        <button onclick="goToNextStep()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold rounded-xl text-xs shadow-md transition inline-flex items-center gap-2">
-                            ${successButton} <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-                `;
             } else {
-                const errorTitle = pickRandom(responseVariants.errorTitles);
-                const errorButton = pickRandom(responseVariants.errorButtons);
-                wrapper.innerHTML = `
-                    <div class="text-center py-8 space-y-6">
-                        <div class="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto shadow-sm">
-                            <i data-lucide="frown" class="w-9 h-9"></i>
-                        </div>
-                        <div class="space-y-2">
-                            <h4 class="text-2xl font-extrabold text-rose-950">${errorTitle}</h4>
-                            <p class="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
-                                <strong>Indice manqué :</strong> ${opt.feedback || "Vérifiez à nouveau la formation et les tâches associées à cette profession."}
-                            </p>
-                        </div>
-                        <button onclick="renderQuestion()" class="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-extrabold rounded-xl text-xs shadow-md transition inline-flex items-center gap-2">
-                            <i data-lucide="rotate-ccw" class="w-4 h-4"></i> ${errorButton}
-                        </button>
-                    </div>
-                `;
+                state.feedback = {
+                    type: 'error',
+                    title: pickRandom(responseVariants.errorTitles),
+                    buttonLabel: pickRandom(responseVariants.errorButtons),
+                    message: opt.feedback || "Vérifiez à nouveau la formation et les tâches associées à cette profession."
+                };
             }
-            initializeIcons();
+
+            saveState();
+            renderFeedback();
         }
 
         // Progression de l'étape
@@ -972,33 +1082,28 @@
 
         // Fin de l'aventure
         function finishGame() {
+            showScreen('victory');
+            state.feedback = null;
+
             document.getElementById('progress-bar').style.width = '100%';
             document.getElementById('progress-text').innerText = '100%';
 
-            document.getElementById('game-screen').classList.add('hidden');
-            document.getElementById('victory-screen').classList.remove('hidden');
-
-            document.getElementById('cert-names').innerText = `${state.player} & ${state.partner}`;
+            syncIdentityDisplays();
             updateScoreDisplays();
+            saveState();
             initializeIcons();
         }
 
         // Réinitialisation globale de l'aventure
         function restartGame() {
-            state.score = 0;
-            state.currentMission = 1;
-            state.currentQuestionIdx = 0;
-            state.currentQuestionKey = "";
-            state.currentOptions = [];
-            state.earnedBadges = [];
-
+            state = getInitialState();
+            clearSavedState();
+            syncIdentityDisplays();
             updateScoreDisplays();
             document.getElementById('progress-bar').style.width = "0%";
             document.getElementById('progress-text').innerText = "0%";
             renderBadges();
-
-            document.getElementById('victory-screen').classList.add('hidden');
-            document.getElementById('welcome-screen').classList.remove('hidden');
+            showScreen('welcome');
         }
 
         // Modal d'erreur personnalisé
@@ -1024,7 +1129,27 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            loadSavedState();
+            syncIdentityDisplays();
             updateScoreDisplays();
+            renderBadges();
+
+            if (state.currentScreen === 'victory' && state.player && state.partner) {
+                finishGame();
+            } else if (state.currentScreen === 'game' && state.player && state.partner) {
+                showScreen('game');
+                applyMissionTabs();
+                if (state.feedback) {
+                    renderFeedback();
+                } else {
+                    renderQuestion();
+                }
+            } else {
+                showScreen('welcome');
+                document.getElementById('progress-bar').style.width = "0%";
+                document.getElementById('progress-text').innerText = "0%";
+            }
+
             initializeIcons();
         });
     </script>
