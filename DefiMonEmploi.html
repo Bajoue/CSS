@@ -674,7 +674,8 @@
                 currentOptions: [],
                 earnedBadges: [],
                 currentScreen: "welcome",
-                feedback: null
+                feedback: null,
+                currentAttempt: 0
             };
         }
 
@@ -884,9 +885,8 @@
             state.currentQuestionKey = "";
             state.currentOptions = [];
             state.feedback = null;
+            state.currentAttempt = 0;
             state.currentScreen = 'game';
-
-            applyMissionTabs();
             renderQuestion();
         }
 
@@ -961,7 +961,9 @@
             const opt = currentOptions[selectedIdx];
 
             if (opt.isCorrect) {
-                state.score += 50;
+                const pts = state.currentAttempt === 0 ? 5 : state.currentAttempt === 1 ? 3 : 1;
+                state.score += pts;
+                state.currentAttempt = 0;
                 state.feedback = {
                     type: 'success',
                     title: pickRandom(responseVariants.successTitles),
@@ -970,8 +972,8 @@
                 };
                 updateScoreDisplays();
             } else {
+                state.currentAttempt = Math.min(state.currentAttempt + 1, 2);
                 state.feedback = {
-                    type: 'error',
                     title: pickRandom(responseVariants.errorTitles),
                     buttonLabel: pickRandom(responseVariants.errorButtons),
                     message: opt.feedback || "Vérifiez à nouveau la formation et les tâches associées à cette profession."
@@ -991,6 +993,7 @@
                 state.currentQuestionIdx++;
                 state.currentQuestionKey = "";
                 state.currentOptions = [];
+                state.currentAttempt = 0;
                 renderQuestion();
             } else {
                 // La mission active est complètement achevée !
